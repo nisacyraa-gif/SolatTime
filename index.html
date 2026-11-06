@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ========================================== -->
+  <!-- HEAD SECTION & STYLESHEET LINKS          -->
+  <!-- ========================================== -->
+  <meta charset="UTF-8">
+  <title>SolatTime - Prayer Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg0:#f4f4f2;
+      --bg1:#fbfbfa;
+      --gold:#0a7a4d;
+      --gold-bright:#0a7a4d;
+      --gold-deep:#0a3d28;
+      --emerald:#0a7a4d;
+      --emerald-deep:#0a3d28;
+      --ink:#111311;
+      --muted:#6b6f6a;
+      --muted2:#a3a8a2;
+      --card-border:#dcdcd6;
+      --card-border-strong:#111311;
+    }
+    *{box-sizing:border-box}
+    html{color-scheme:light}
+    body{
+      margin:0; text-align:left;
+      font-family:"Outfit",system-ui,sans-serif;
+      background:#fbfbfa;
+      color:var(--ink);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    .wrap{max-width:1060px; margin:0 auto; padding:26px 22px 90px}
+
+    /* TOP NAV */
+    .top-nav{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:12px 16px; background:#fff;
+      border-bottom:1.5px solid #111311; position:sticky; top:0; z-index:50;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .brand-mark{
+      width:42px; height:42px; display:grid; place-items:center;
+      background:linear-gradient(135deg, #0e2a22 0%, #124d3a 55%, #1a6b50 100%);
+      color:#fff; font-size:22px;
+    }
+    .brand-name strong{font-family:"Space Grotesk",serif; font-size:22px; font-weight:700}
+    .brand-name strong span{color:var(--gold-bright)}
+    .brand-name span{display:block; font-size:11px; letter-spacing:2.2px; text-transform:uppercase; color:var(--muted); margin-top:3px}
+    .nav-right{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .status{
+      display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600;
+      padding:8px 14px; background:rgba(13,157,108,.12); border:1px solid rgba(13,157,108,.4); color:#0b5c40;
+    }
+    .status .dot{width:8px; height:8px; border-radius:50%; background:#34d399; animation:pulse 2s infinite}
+    .status.off{background:rgba(248,113,113,.14); border-color:rgba(248,113,113,.45); color:#b91c1c}
+    .status.off .dot{background:#f87171; animation:none}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.6)}70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+    .clock-pill{
+      display:flex; align-items:center; gap:10px; padding:8px 14px;
+      background:rgba(176,138,62,.12); border:1px solid var(--card-border);
+      font-variant-numeric:tabular-nums; color:var(--ink);
+    }
+    .clock-pill b{font-size:14px; letter-spacing:.5px}
+    .clock-pill span{font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase}
+
+    /* HERO */
+    .hero{margin-top:22px; display:grid; grid-template-columns:1.3fr .9fr; gap:28px}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}}
+    .hero-main{
+      padding:34px 30px 28px; background:#ffffff; border:1.5px solid #111311;
+      position:relative; overflow:hidden; box-shadow:6px 6px 0 #111311;
+    }
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:8px; font-size:11.5px; letter-spacing:2.4px;
+      text-transform:uppercase; color:var(--gold-bright); border:1px solid var(--card-border);
+      padding:7px 12px; margin-bottom:14px;
+    }
+    .hero-main h1{
+      font-family:"Space Grotesk",serif; font-weight:700;
+      font-size:clamp(32px, 5vw, 54px); line-height:.95; margin:0; text-transform:uppercase;
+    }
+    .hero-sub{color:var(--muted); font-size:14.5px; margin:12px 0 0; max-width:52ch; line-height:1.6}
+    .meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px}
+    .meta-chip{
+      display:inline-flex; align-items:center; gap:8px; font-size:12.5px; padding:8px 12px;
+      background:#f4f4f2; border:1px solid #dcdcd6; color:var(--ink);
+    }
+    .meta-chip.zone{background:#111311; border-color:#111311; color:#fff; font-weight:700; letter-spacing:.6px}
+    .meta-chip small{color:var(--muted)}
+    .next-strip{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:14px}
+    .next-badge{
+      display:flex; align-items:center; gap:12px; background:#111311; border:1px solid #111311;
+      padding:10px 14px 10px 10px; color:#fff;
+    }
+    .next-icon{width:40px; height:40px; display:grid; place-items:center; font-size:20px; background:#22251f; border:1px solid #333}
+    .next-badge .lbl{font-size:11px; letter-spacing:1.8px; text-transform:uppercase; color:#bdbfba}
+    .next-badge .val{font-size:18px; font-weight:700}
+    .next-badge .val small{font-size:13px; color:#7fd6a8; font-weight:600}
+
+    /* SEARCH CARD */
+    .search-card{
+      padding:22px; background:#ffffff; border:1.5px solid #111311;
+    }
+    .search-card h3{font-family:"Space Grotesk",serif; font-size:24px; margin:6px 0 4px}
+    .search-card p{margin:0 0 14px; font-size:13px; color:var(--muted); line-height:1.5}
+    .field-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px}
+    .field{display:flex; flex-direction:column; gap:6px}
+    .field label{font-size:11px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--muted)}
+    .field input{
+      border:1.5px solid #dcdcd6; background:#fff; padding:12px 13px;
+      font-size:14px; font-family:inherit; color:var(--ink); outline:none;
+    }
+    .field input:focus{border-color:var(--emerald)}
+    .btn-row{display:flex; gap:10px; margin-top:4px}
+    .btn{
+      border:0; cursor:pointer; font-family:inherit; padding:12px 16px;
+      font-size:14px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-gold{background:#111311; color:#fff; flex:1}
+    .btn-gold:hover{background:#0a7a4d}
+    .btn-light-green{
+      background:#e3fcef; color:#065f46; border:1.5px solid #34d399; flex:1;
+    }
+    .btn-light-green:hover{
+      background:#d1fae5; border-color:#059669;
+    }
+    .zone-hint{margin-top:12px; font-size:12px; color:var(--muted); background:#f4f4f2; border:1px solid #dcdcd6; padding:10px 12px; line-height:1.5}
+
+    /* PRAYER GRID */
+    .section-head{display:flex; align-items:end; justify-content:space-between; gap:12px; margin:44px 2px 18px}
+    .section-head h2{font-family:"Space Grotesk",serif; font-size:24px; margin:0; font-weight:700; text-transform:uppercase}
+    .section-head p{margin:4px 0 0; color:var(--muted); font-size:13px}
+    .date-pill{font-size:12.5px; color:var(--muted); background:#fff; border:1px solid var(--card-border); padding:8px 12px}
+    .prayer-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:18px}
+    @media(max-width:980px){.prayer-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:620px){.prayer-grid{grid-template-columns:repeat(2,1fr)}}
+    .prayer-card{
+      padding:18px 16px; background:#ffffff; border:1px solid #dcdcd6; border-top:3px solid #dcdcd6;
+    }
+    .prayer-card .pc-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px}
+    .pc-icon{width:40px; height:40px; display:grid; place-items:center; font-size:22px; background:#f4f4f2; border:1px solid #dcdcd6}
+    .pc-state{display:none}
+    .prayer-card.is-next{border-color:#111311; border-top:3px solid #0a7a4d; background:#111311; color:#fff}
+    .prayer-card.is-next h4, .prayer-card.is-next .time{color:#fff}
+    .prayer-card.is-next .ar{color:#7fd6a8}
+    .prayer-card.is-next .pc-icon{background:#22251f; border-color:#333; color:#fff}
+    .prayer-card.is-next .pc-state{display:block; font-size:10px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; padding:4px 8px; background:#0a7a4d; color:#fff}
+    .prayer-card h4{margin:0; font-size:15px; font-weight:700}
+    .prayer-card .ar{font-family:"Amiri",serif; font-size:20px; color:var(--emerald); margin:2px 0 8px}
+    .prayer-card .time{font-size:24px; font-weight:700; font-family:"IBM Plex Mono",monospace}
+    .prayer-card .time small{font-size:12px; font-weight:600; color:var(--muted)}
+
+    /* SPLIT */
+    .split{display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:28px}
+    @media(max-width:900px){.split{grid-template-columns:1fr}}
+    .card{padding:24px; background:#ffffff; border:1.5px solid #111311; color:var(--ink)}
+    .card h3{font-family:"Space Grotesk",serif; font-size:20px; margin:0 0 4px; text-transform:uppercase}
+    .card .desc{margin:0 0 14px; font-size:13px; color:var(--muted)}
+
+    /* COUNTDOWN */
+    .count-hero{background:#f4f4f2; border:1px solid #dcdcd6; padding:18px}
+    .count-label{font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-weight:700}
+    .count-name{font-family:"Space Grotesk",serif; font-size:28px; margin:4px 0 6px}
+    .count-timer{font-size:26px; font-weight:700; font-family:"IBM Plex Mono",monospace}
+    .progress{height:8px; background:#e4e4e0; overflow:hidden; margin-top:10px}
+    .progress i{display:block; height:100%; width:0%; background:#0a7a4d; transition:width .6s}
+    .count-foot{display:flex; justify-content:space-between; margin-top:10px; font-size:12px; color:var(--muted)}
+
+    /* DOA */
+    .doa-progress{display:flex; align-items:center; gap:12px; margin:0 0 14px; background:#f4f4f2; border:1px solid #dcdcd6; padding:10px 12px}
+    .doa-progress .bar{flex:1; height:8px; background:#e4e4e0; overflow:hidden}
+    .doa-progress .bar i{display:block; height:100%; width:0; background:#0a7a4d; transition:width .4s}
+    .checklist{display:flex; flex-direction:column; gap:2px}
+    .check-item{
+      display:flex; gap:12px; align-items:flex-start; padding:12px 4px; cursor:pointer;
+      background:transparent; border:0; border-bottom:1px solid #ece4cf;
+    }
+    .check-item:last-child{border-bottom:0}
+    .check-item input{display:none}
+    .box{
+      width:24px; height:24px; flex:0 0 24px; display:grid; place-items:center;
+      border:1.5px solid #dcdcd6; background:#fff; font-size:15px; color:transparent;
+    }
+    .check-item.done .box{background:#111311; color:#fff; border-color:#111311}
+    .check-item .txt{font-size:13.5px; line-height:1.55}
+    .check-item .txt .ar-line{display:block; font-family:"Amiri",serif; font-size:16px; color:var(--muted); margin-top:4px}
+    .check-item.done .txt{color:var(--muted); text-decoration:line-through}
+
+    /* REMINDERS */
+    .rem-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px}
+    .btn-small{
+      border:1.5px solid #111311; background:#f4f4f2; color:var(--ink);
+      font-size:12.5px; font-weight:700; padding:8px 14px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:4px;
+    }
+    .btn-small:hover{background:#111311; color:#fff}
+    .rem-list{display:flex; flex-direction:column; gap:2px; max-height:380px; overflow:auto}
+    .rem-empty{text-align:center; padding:26px 16px; border:1.5px dashed #d8cba4; color:var(--muted); font-size:13px; background:#f4f4f2}
+    .rem{display:flex; gap:12px; align-items:center; border-bottom:1px solid #ece4cf; padding:12px 4px}
+    .rem:last-child{border-bottom:0}
+    .rem-time{flex:0 0 74px; text-align:center; padding:8px 6px; background:#f4f4f2; border:1px solid #dcdcd6; font-family:"IBM Plex Mono",monospace}
+    .rem-time b{display:block; font-size:14px}
+    .rem-time span{font-size:10px; text-transform:uppercase; color:var(--muted)}
+    .rem-body{flex:1; min-width:0}
+    .rem-body b{display:block; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .rem-body span{font-size:12px; color:var(--muted)}
+    .rem-toggle{width:42px; height:24px; border-radius:999px; border:1px solid #d8cba4; background:#e7e0cc; position:relative; cursor:pointer}
+    .rem-toggle::after{content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; transition:.2s}
+    .rem-toggle.on{background:#0a7a4d; border-color:transparent}
+    .rem-toggle.on::after{left:20px}
+    .rem-del{background:#fff; border:1px solid #d8cba4; color:var(--muted); width:32px; height:32px; cursor:pointer}
+    .rem-del:hover{color:#b91c1c; background:#fef2f2}
+
+    /* TIMETABLE */
+    .timetable{margin-top:28px}
+    .table-wrap{overflow:auto; border:1.5px solid #111311; max-height:460px; background:#fff}
+    table.month{width:100%; border-collapse:collapse; font-size:13px; min-width:760px}
+    table.month thead th{
+      position:sticky; top:0; background:#111311; color:#fff; font-size:11px;
+      letter-spacing:2px; text-transform:uppercase; padding:12px 10px; text-align:center;
+    }
+    table.month td{padding:10px; text-align:center; border-bottom:1px solid #e4e4e0; font-family:"IBM Plex Mono",monospace}
+    table.month tr.today td{background:#111311 !important; color:#fff; font-weight:700}
+
+    /* MODAL */
+    .overlay{
+      position:fixed; inset:0; z-index:100; background:rgba(3,7,6,.7);
+      display:none; align-items:center; justify-content:center; padding:18px;
+    }
+    .overlay.open{display:flex}
+    .modal{
+      width:min(760px, 100%); max-height:86vh; display:flex; flex-direction:column;
+      background:#fff; border:1.5px solid #111311; overflow:hidden;
+    }
+    .modal-head{padding:20px; border-bottom:1px solid #dcdcd6}
+    .modal-head h2{margin:0; font-family:"Space Grotesk",serif; font-size:24px}
+    .modal-search{padding:14px 20px}
+    .modal-search input{width:100%; padding:12px; border:1.5px solid #dcdcd6; font-family:inherit; font-size:14px}
+    .modal-body{padding:14px 20px; overflow:auto; flex:1}
+    .state-group{margin-bottom:14px}
+    .state-group h4{font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700; color:var(--gold); margin-bottom:6px}
+    .zone-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:8px}
+    .zone-btn{
+      text-align:left; cursor:pointer; background:#f4f4f2; border:1px solid #dcdcd6;
+      padding:11px 12px; font-family:inherit; font-size:12.5px;
+    }
+    .zone-btn:hover{background:#111311; color:#fff}
+    .zone-btn b{display:block; font-size:13px}
+    .zone-btn span{display:block; font-size:11.5px; color:var(--muted); margin-top:3px}
+    .zone-btn code{font-size:11px; color:#7a5c14; background:#f1e8cf; padding:2px 6px; margin-top:6px; display:inline-block}
+    .modal-foot{padding:14px 20px; border-top:1px solid #dcdcd6; display:flex; justify-content:flex-end}
+    .modal-close{padding:10px 20px; background:#f4f4f2; border:1.5px solid #111311; font-weight:700; cursor:pointer}
+    .toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px);
+      background:#111311; color:#fff; padding:12px 16px; font-size:13px; z-index:200;
+      opacity:0; pointer-events:none; transition:.3s;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+    .skeleton{padding:26px; text-align:center; color:var(--muted); border:1.5px dashed #d8cba4; background:#f4f4f2}
+    footer{margin-top:40px; text-align:center; color:var(--muted); font-size:12px; border-top:1px solid #dcdcd6; padding-top:20px}
+    footer b{color:var(--ink)}
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="top-nav">
+    <div class="brand">
+      <div class="brand-mark">☪️</div>
+      <div class="brand-name"><strong>Solat<em>Time</em></strong><span>Prayer Assistant</span></div>
+    </div>
+    <div class="nav-right">
+      <div class="clock-pill"><span id="clockDateEl">—</span><b id="clockTimeEl">--:--:--</b></div>
+      <div class="status" id="apiStatusEl"><span class="dot"></span><span id="apiStatusText">Connecting…</span></div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-main">
+      <div class="eyebrow">✦ &nbsp;Prayer Times in Malaysia&nbsp; ✦</div>
+      <h1 id="locationTitleText">CHOOSE YOUR ZONE</h1>
+      <p class="hero-sub" id="locationSubText">Showing accurate JAKIM prayer times. Select your zone to get precise timings for your city — with live countdown, reminders and monthly timetable.</p>
+      <div class="meta-row">
+        <div class="meta-chip zone">📍 <span id="zoneCodeEl" style="color:inherit; font-weight:800">—</span></div>
+        <div class="meta-chip">🕌 <small style="margin-right:4px">Hijri</small> <b id="hijriEl">—</b></div>
+        <div class="meta-chip">📅 <b id="gregEl">—</b></div>
+        <div class="meta-chip">🌅 <small>Syuruk</small> <b id="syurukMiniEl">—</b></div>
+      </div>
+      <div class="next-strip">
+        <div class="next-badge">
+          <div class="next-icon" id="nextIconEl">🤲</div>
+          <div><div class="lbl">Up next</div><div class="val"><span id="nextNameEl">—</span> <small id="nextTimeEl">—</small></div></div>
+        </div>
+        <div class="next-badge" style="flex:1; min-width:200px">
+          <div style="flex:1">
+            <div class="lbl">Countdown</div>
+            <div class="val" id="heroCountdownEl" style="font-variant-numeric:tabular-nums">--:--:--</div>
+          </div>
+          <div style="font-size:12px; color:#bdbfba; text-align:right">MYT<br>GMT+8</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-card">
+      <h3>Find your zone</h3>
+      <p>Search by state + city, or open the full JAKIM zone directory. Times update instantly.</p>
+      <div class="field-grid">
+        <div class="field"><label>State</label><input type="text" id="stateInput" value="" placeholder="e.g. Johor"></div>
+        <div class="field"><label>City</label><input type="text" id="cityInput" value="" placeholder="e.g. Mersing"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-light-green" id="openLocationModalBtn">📍Lists of City/Zone</button>
+        <button class="btn btn-gold" id="searchBtn">🔍 Search</button>
+      </div>
+      <div class="zone-hint" id="zoneHintEl">💡 Tip: try searching state &amp; city or use the Zones Directory.</div>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <div><h2>Today's <span>Prayers</span></h2><p id="todayLineEl">Please choose a zone to load today's schedule…</p></div>
+    <div class="date-pill" id="todayPillEl">—</div>
+  </div>
+  <div id="prayerCardsGrid" class="prayer-grid"><div class="skeleton" style="grid-column:1/-1">✨ Please choose your location or zone to load prayer times.</div></div>
+
+  <div class="split">
+    <div style="display:flex; flex-direction:column; gap:28px">
+      <div class="card">
+        <h3>Upcoming Prayer Countdown</h3>
+        <p class="desc">Live progress to the next prayer — bar fills as the time approaches.</p>
+        <div class="count-hero">
+          <div class="count-numbers">
+            <div class="count-label" id="calcLabelEl">Waiting for zone…</div>
+            <div class="count-name" id="calcNameEl">—</div>
+            <div class="count-timer" id="calcTimerEl">-- <span>:</span> -- <span>:</span> --</div>
+            <div class="progress"><i id="calcBarEl"></i></div>
+            <div class="count-foot"><span id="calcFromEl">—</span><span id="calcToEl">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Daily Doa &amp; Zikr</h3>
+        <p class="desc">Reflect and check off your daily spiritual recitations. Saved on this device.</p>
+        <div class="doa-progress"><div class="bar"><i id="doaBarEl"></i></div><b id="doaPctEl">0 / 4 done</b></div>
+        <div class="checklist" id="guidanceChecklist"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="height:100%; display:flex; flex-direction:column">
+        <div class="rem-head">
+          <h3>Upcoming Reminders</h3>
+          <a href="reminders.html" class="btn-small">Manage ↗</a>
+        </div>
+        <div class="rem-list" id="mainReminderList"></div>
+        <p style="margin:12px 0 0; font-size:12px; color:var(--muted2); line-height:1.6">Reminders are stored locally in your browser. Click Manage to open the full management page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card timetable">
+    <div class="rem-head"><h3 id="monthlyTableHeading">Monthly Prayer Timetable</h3><div class="date-pill" id="monthPillEl">—</div></div>
+    <p class="desc">Full month view for your zone. Today is highlighted.</p>
+    <div class="table-wrap">
+      <table class="monthly-table month">
+        <thead><tr><th>Day</th><th>Imsak</th><th>Fajr</th><th>Syuruk</th><th>Dhuhr</th><th>Asr</th><th>Maghrib</th><th>Isha</th></tr></thead>
+        <tbody id="monthlyTableBody"><tr><td colspan="8" style="text-align:center; padding:18px">Please select a zone to load monthly timetable…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>Made with 🤍 for the ummah · <b>SolatTime</b> · Live data by <b>waktusolat.app</b> (JAKIM zones) · Times in Asia/Kuala_Lumpur</footer>
+</div>
+
+<!-- Location Modal Directory -->
+<div class="overlay" id="locationModal">
+  <div class="modal">
+    <div class="modal-head"><h2>Select Location</h2><p>Choose your prayer zone or search by city / zone code.</p></div>
+    <div class="modal-search modal-search-bar"><input type="text" id="modalSearchInput" placeholder="Search city or zone code (e.g. Shah Alam, JHR02)…"></div>
+    <div class="modal-body" id="modalZonesBody"><div class="skeleton">Loading zones…</div></div>
+    <div class="modal-foot"><button class="modal-close" id="closeModalBtn">Close</button></div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal Popup -->
+<div class="overlay" id="deleteModal" style="position:fixed; inset:0; z-index:100; background:rgba(3,7,6,.7); display:none; align-items:center; justify-content:center; padding:18px;">
+  <div class="confirm-modal" style="background:#fff; border:1.5px solid #111311; width:min(420px, 100%); padding:24px; text-align:center;">
+    <h3 style="font-family:'Space Grotesk',serif; font-size:20px; margin:0 0 8px; text-transform:uppercase;">
+      Delete Reminder
+    </h3>
+    <p style="color:var(--muted); font-size:13.5px; margin:0 0 20px;">
+      Are you sure you want to delete this reminder?
+    </p>
+    <div class="confirm-btns" style="display:flex; gap:10px;">
+      <button class="btn-no" id="cancelDeleteBtn" style="flex:1; padding:12px; font-weight:700; cursor:pointer; background:#f4f4f2; border:1.5px solid #111311;">Cancel</button>
+      <button class="btn-yes" id="confirmDeleteBtn" style="flex:1; padding:12px; font-weight:700; cursor:pointer; background:#b91c1c; color:#fff; border:1.5px solid #b91c1c;">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var malaysiaZones = {
+    'pulau aur': 'JHR01', 'pulau pemanggil': 'JHR01',
+    'johor bahru': 'JHR02', 'kota tinggi': 'JHR02', 'mersing': 'JHR02', 'kulai': 'JHR02',
+    'kluang': 'JHR03', 'pontian': 'JHR03',
+    'batu pahat': 'JHR04', 'muar': 'JHR04', 'segamat': 'JHR04', 'gemas': 'JHR04', 'tangkak': 'JHR04',
+    'kota setar': 'KDH01', 'alor setar': 'KDH01', 'kubang pasu': 'KDH01', 'pokok sena': 'KDH01',
+    'kuala muda': 'KDH02', 'sungai petani': 'KDH02', 'yan': 'KDH02', 'pendang': 'KDH02',
+    'padang terap': 'KDH03', 'sik': 'KDH03',
+    'baling': 'KDH04',
+    'bandar baharu': 'KDH05', 'kulim': 'KDH05',
+    'langkawi': 'KDH06',
+    'gunung jerai': 'KDH07',
+    'bachok': 'KTN01', 'kota bharu': 'KTN01', 'machang': 'KTN01', 'pasir mas': 'KTN01',
+    'pasir puteh': 'KTN01', 'tanah merah': 'KTN01', 'tumpat': 'KTN01', 'kuala krai': 'KTN01', 'chiku': 'KTN01',
+    'gua musang': 'KTN02', 'jeli': 'KTN02', 'lojing': 'KTN02',
+    'melaka': 'MLK01', 'malacca': 'MLK01', 'ayer keroh': 'MLK01', 'alor gajah': 'MLK01', 'jasin': 'MLK01',
+    'tampin': 'NGS01', 'jempol': 'NGS01', 'bahau': 'NGS01',
+    'jelebu': 'NGS02', 'kuala pilah': 'NGS02', 'rembau': 'NGS02',
+    'port dickson': 'NGS03', 'seremban': 'NGS03', 'nilai': 'NGS03',
+    'pulau tioman': 'PHG01', 'tioman': 'PHG01',
+    'kuantan': 'PHG02', 'pekan': 'PHG02', 'muadzam shah': 'PHG02',
+    'jerantut': 'PHG03', 'temerloh': 'PHG03', 'maran': 'PHG03', 'bera': 'PHG03', 'chenor': 'PHG03', 'jengka': 'PHG03',
+    'bentong': 'PHG04', 'lipis': 'PHG04', 'raub': 'PHG04',
+    'genting sempah': 'PHG05', 'janda baik': 'PHG05', 'bukit tinggi': 'PHG05',
+    'cameron highlands': 'PHG06', 'genting highlands': 'PHG06', 'bukit fraser': 'PHG06',
+    'rompin': 'PHG07', 'endau': 'PHG07',
+    'tapah': 'PRK01', 'slim river': 'PRK01', 'tanjung malim': 'PRK01',
+    'kuala kangsar': 'PRK02', 'sungai siput': 'PRK02', 'sg siput': 'PRK02', 'ipoh': 'PRK02', 'batu gajah': 'PRK02', 'kampar': 'PRK02',
+    'lenggong': 'PRK03', 'pengkalan hulu': 'PRK03', 'gerik': 'PRK03', 'grik': 'PRK03',
+    'temengor': 'PRK04', 'belum': 'PRK04',
+    'kampung gajah': 'PRK05', 'kg gajah': 'PRK05', 'teluk intan': 'PRK05', 'bagan datuk': 'PRK05', 'seri iskandar': 'PRK05', 'beruas': 'PRK05', 'parit': 'PRK05', 'lumut': 'PRK05', 'sitiawan': 'PRK05', 'pulau pangkor': 'PRK05',
+    'selama': 'PRK06', 'taiping': 'PRK06', 'bagan serai': 'PRK06', 'parit buntar': 'PRK06',
+    'bukit larut': 'PRK07',
+    'perlis': 'PLS01', 'kangar': 'PLS01', 'arau': 'PLS01', 'padang besar': 'PLS01',
+    'pulau pinang': 'PNG01', 'penang': 'PNG01', 'george town': 'PNG01', 'georgetown': 'PNG01', 'butterworth': 'PNG01', 'bukit mertajam': 'PNG01',
+    'sandakan': 'SBH01', 'beluran': 'SBH02', 'lahad datu': 'SBH03', 'tawau': 'SBH04', 'kudat': 'SBH05', 'gunung kinabalu': 'SBH06', 'kota kinabalu': 'SBH07', 'keningau': 'SBH08', 'beaufort': 'SBH09',
+    'limbang': 'SWK01', 'miri': 'SWK02', 'bintulu': 'SWK03', 'sibu': 'SWK04', 'sarikei': 'SWK05', 'sri aman': 'SWK06', 'serian': 'SWK07', 'kuching': 'SWK08',
+    'gombak': 'SGR01', 'petaling': 'SGR01', 'shah alam': 'SGR01', 'petaling jaya': 'SGR01', 'subang jaya': 'SGR01', 'puchong': 'SGR01', 'kajang': 'SGR01', 'bangi': 'SGR01', 'semenyih': 'SGR01', 'ampang': 'SGR01', 'rawang': 'SGR01', 'cyberjaya': 'SGR01', 'sepang': 'SGR01', 'kuala selangor': 'SGR02', 'sabak bernam': 'SGR02', 'klang': 'SGR03', 'banting': 'SGR03',
+    'kuala terengganu': 'TRG01', 'besut': 'TRG02', 'hulu terengganu': 'TRG03', 'dungun': 'TRG04', 'kemaman': 'TRG04',
+    'kuala lumpur': 'WLY01', 'putrajaya': 'WLY01', 'labuan': 'WLY02'
+  };
+
+  var stateZonesData = {
+    "JOHOR": [
+      { name: "Pulau Aur, Pulau Pemanggil", code: "JHR01" },
+      { name: "Johor Bahru, Kota Tinggi, Mersing, Kulai", code: "JHR02" },
+      { name: "Kluang, Pontian", code: "JHR03" },
+      { name: "Batu Pahat, Muar, Segamat, Gemas, Tangkak", code: "JHR04" }
+    ],
+    "KEDAH": [
+      { name: "Kota Setar, Alor Setar, Kubang Pasu, Pokok Sena", code: "KDH01" },
+      { name: "Kuala Muda, Sungai Petani, Yan, Pendang", code: "KDH02" },
+      { name: "Padang Terap, Sik", code: "KDH03" },
+      { name: "Baling", code: "KDH04" },
+      { name: "Bandar Baharu, Kulim", code: "KDH05" },
+      { name: "Langkawi", code: "KDH06" },
+      { name: "Gunung Jerai", code: "KDH07" }
+    ],
+    "KELANTAN": [
+      { name: "Kota Bharu, Bachok, Pasir Puteh, Tumpat, Pasir Mas, Tanah Merah, Machang, Kuala Krai, Chiku", code: "KTN01" },
+      { name: "Gua Musang, Jeli, Lojing", code: "KTN02" }
+    ],
+    "MELAKA": [
+      { name: "Melaka, Alor Gajah, Jasin, Ayer Keroh", code: "MLK01" }
+    ],
+    "NEGERI SEMBILAN": [
+      { name: "Tampin, Jempol, Bahau", code: "NGS01" },
+      { name: "Jelebu, Kuala Pilah, Rembau", code: "NGS02" },
+      { name: "Port Dickson, Seremban, Nilai", code: "NGS03" }
+    ],
+    "PAHANG": [
+      { name: "Pulau Tioman, Tioman", code: "PHG01" },
+      { name: "Kuantan, Pekan, Muadzam Shah", code: "PHG02" },
+      { name: "Jerantut, Temerloh, Maran, Bera, Chenor, Jengka", code: "PHG03" },
+      { name: "Bentong, Lipis, Raub", code: "PHG04" },
+      { name: "Genting Sempah, Janda Baik, Bukit Tinggi", code: "PHG05" },
+      { name: "Cameron Highlands, Genting Highlands, Bukit Fraser", code: "PHG06" },
+      { name: "Rompin, Endau", code: "PHG07" }
+    ],
+    "PERAK": [
+      { name: "Tapah, Slim River, Tanjung Malim", code: "PRK01" },
+      { name: "Kuala Kangsar, Sungai Siput, Ipoh, Batu Gajah, Kampar", code: "PRK02" },
+      { name: "Lenggong, Pengkalan Hulu, Gerik", code: "PRK03" },
+      { name: "Temengor, Belum", code: "PRK04" },
+      { name: "Kampung Gajah, Teluk Intan, Bagan Datuk, Seri Iskandar, Beruas, Parit, Lumut, Sitiawan, Pulau Pangkor", code: "PRK05" },
+      { name: "Selama, Taiping, Bagan Serai, Parit Buntar", code: "PRK06" },
+      { name: "Bukit Larut", code: "PRK07" }
+    ],
+    "PERLIS": [
+      { name: "Perlis, Kangar, Arau, Padang Besar", code: "PLS01" }
+    ],
+    "PULAU PINANG": [
+      { name: "Pulau Pinang, George Town, Butterworth, Bukit Mertajam", code: "PNG01" }
+    ],
+    "SABAH": [
+      { name: "Sandakan, Bukit Garam, Semawang, Temanggong, Tambisan, Sukau", code: "SBH01" },
+      { name: "Beluran, Telupid, Pinangah, Terusan, Kuamut", code: "SBH02" },
+      { name: "Lahad Datu, Silabukan, Kunak, Sahabat, Semporna, Tungku", code: "SBH03" },
+      { name: "Tawau, Balong, Merotai, Kalabakan", code: "SBH04" },
+      { name: "Kudat, Kota Marudu, Pitas, Pulau Banggi", code: "SBH05" },
+      { name: "Gunung Kinabalu", code: "SBH06" },
+      { name: "Kota Kinabalu, Ranau, Kota Belud, Tuaran, Penampang, Papar, Putatan", code: "SBH07" },
+      { name: "Pensiangan, Keningau, Tambunan, Nabawan", code: "SBH08" },
+      { name: "Beaufort, Kuala Penyu, Sipitang, Tenom, Long Pasia, Membakut, Weston", code: "SBH09" }
+    ],
+    "SARAWAK": [
+      { name: "Limbang, Lawas, Sundar, Trusan", code: "SWK01" },
+      { name: "Miri, Niah, Bekenu, Sibuti, Marudi", code: "SWK02" },
+      { name: "Pandan, Belaga, Suai, Tatau, Sebauh, Bintulu", code: "SWK03" },
+      { name: "Sibu, Mukah, Dalat, Song, Igan, Oya, Balingian, Kanowit, Kapit", code: "SWK04" },
+      { name: "Sarikei, Matu, Julau, Rajang, Daro, Bintangor, Belawai", code: "SWK05" },
+      { name: "Lubok Antu, Sri Aman, Roban, Debak, Kabong, Lingga, Engkilili, Betong, Spaoh, Pusa, Saratok", code: "SWK06" },
+      { name: "Serian, Simunjan, Samarahan, Sebuyau, Meludam", code: "SWK07" },
+      { name: "Kuching, Bau, Lundu, Sematan", code: "SWK08" },
+      { name: "Kampung Patarikan", code: "SWK09" }
+    ],
+    "SELANGOR": [
+      { name: "Gombak, Petaling, Shah Alam, Puchong, Kajang, Bangi, Semenyih, Ampang, Rawang, Cyberjaya, Sepang, Hulu Langat, Hulu Selangor", code: "SGR01" },
+      { name: "Kuala Selangor, Sabak Bernam", code: "SGR02" },
+      { name: "Klang, Banting, Kuala Langat", code: "SGR03" }
+    ],
+    "TERENGGANU": [
+      { name: "Kuala Terengganu, Marang, Kuala Nerus", code: "TRG01" },
+      { name: "Besut, Setiu", code: "TRG02" },
+      { name: "Hulu Terengganu", code: "TRG03" },
+      { name: "Dungun, Kemaman", code: "TRG04" }
+    ],
+    "WILAYAH PERSEKUTUAN": [
+      { name: "Kuala Lumpur, Putrajaya", code: "WLY01" },
+      { name: "Labuan", code: "WLY02" }
+    ]
+  };
+
+  function $(id){ return document.getElementById(id); }
+  var stateInput = $("stateInput");
+  var cityInput = $("cityInput");
+  var searchBtn = $("searchBtn");
+  var locationTitleText = $("locationTitleText");
+  var zoneCodeEl = $("zoneCodeEl");
+  var zoneHintEl = $("zoneHintEl");
+  var grid = $("prayerCardsGrid");
+  var monthlyBody = $("monthlyTableBody");
+  var monthlyHeading = $("monthlyTableHeading");
+  var monthPillEl = $("monthPillEl");
+  var apiStatusEl = $("apiStatusEl");
+  var apiStatusText = $("apiStatusText");
+  var clockTimeEl = $("clockTimeEl");
+  var clockDateEl = $("clockDateEl");
+  var hijriEl = $("hijriEl");
+  var gregEl = $("gregEl");
+  var syurukMiniEl = $("syurukMiniEl");
+  var nextNameEl = $("nextNameEl");
+  var nextTimeEl = $("nextTimeEl");
+  var nextIconEl = $("nextIconEl");
+  var heroCountdownEl = $("heroCountdownEl");
+  var calcLabelEl = $("calcLabelEl");
+  var calcNameEl = $("calcNameEl");
+  var calcTimerEl = $("calcTimerEl");
+  var calcBarEl = $("calcBarEl");
+  var calcFromEl = $("calcFromEl");
+  var calcToEl = $("calcToEl");
+  var todayLineEl = $("todayLineEl");
+  var todayPillEl = $("todayPillEl");
+  var locationModal = $("locationModal");
+  var modalSearchInput = $("modalSearchInput");
+  var modalZonesBody = $("modalZonesBody");
+  var mainReminderList = $("mainReminderList");
+  var toastEl = $("toastEl");
+
+  var deleteModal = $("deleteModal");
+  var confirmDeleteBtn = $("confirmDeleteBtn");
+  var cancelDeleteBtn = $("cancelDeleteBtn");
+  var pendingDeleteId = null;
+
+  var MY_TZ = "Asia/Kuala_Lumpur";
+  var currentZone = "";
+  var currentNegeri = "";
+  var currentDaerah = "";
+  var monthData = null;
+  var todayPrayer = null;
+  var countdownTimer = null;
+
+  var PRAYERS = [
+    { key: "fajr", name: "Fajr", ar: "الفجر", icon: "🌄", desc: "Dawn prayer" },
+    { key: "dhuhr", name: "Dhuhr", ar: "الظهر", icon: "☀️", desc: "Midday prayer" },
+    { key: "asr", name: "Asr", ar: "العصر", icon: "🌤️", desc: "Afternoon prayer" },
+    { key: "maghrib", name: "Maghrib", ar: "المغرب", icon: "🌇", desc: "Sunset prayer" },
+    { key: "isha", name: "Isha", ar: "العشاء", icon: "🌙", desc: "Night prayer" }
+  ];
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastEl._t);
+    toastEl._t = setTimeout(function(){
+      toastEl.classList.remove("show");
+    }, 2600);
+  }
+
+  function myNowParts(){
+    var fmt = new Intl.DateTimeFormat("en-CA", {
+      timeZone: MY_TZ, year: "numeric", month: "numeric", day: "numeric"
+    });
+    var p = fmt.formatToParts(new Date());
+    var o = {};
+    p.forEach(function(x){
+      o[x.type] = x.value;
+    });
+    return { y: parseInt(o.year, 10), m: parseInt(o.month, 10), d: parseInt(o.day, 10) };
+  }
+
+  function fmtTime(unix){
+    try{
+      return new Intl.DateTimeFormat("en-MY", {
+        timeZone: MY_TZ, hour: "2-digit", minute: "2-digit", hour12: true
+      }).format(new Date(unix * 1000));
+    } catch(e){
+      return new Date(unix * 1000).toLocaleTimeString();
+    }
+  }
+
+  function fmtShort(unix){
+    try{
+      return new Intl.DateTimeFormat("en-GB", {
+        timeZone: MY_TZ, hour: "2-digit", minute: "2-digit", hour12: false
+      }).format(new Date(unix * 1000));
+    } catch(e){
+      return "--:--";
+    }
+  }
+
+  function setStatus(ok, msg){
+    apiStatusEl.classList.toggle("off", !ok);
+    apiStatusText.textContent = msg;
+  }
+
+  function tickClock(){
+    try{
+      var t = new Intl.DateTimeFormat("en-GB", {
+        timeZone: MY_TZ, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+      }).format(new Date());
+      var d = new Intl.DateTimeFormat("en-MY", {
+        timeZone: MY_TZ, weekday: "short", day: "numeric", month: "short"
+      }).format(new Date());
+      clockTimeEl.textContent = t;
+      clockDateEl.textContent = d + " · MYT";
+    } catch(e){}
+  }
+  setInterval(tickClock, 1000);
+  tickClock();
+
+  var DOAS = [
+    { id: "istighfar", title: "Sayyidul Istighfar", text: "Allahumma anta Rabbi, la ilaha illa anta…", ar: "اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ" },
+    { id: "ease", title: "Doa For Ease", text: "Rabbishrah li sadri, wa yassirli amri…", ar: "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي" },
+    { id: "tasbih", title: "Tasbih Fatimah", text: "Subhanallah (33x), Alhamdulillah (33x), Allahu Akbar (34x)", ar: "سُبْحَانَ اللهِ وَالْحَمْدُ لِلَّهِ وَاللهُ أَكْبَرُ" },
+    { id: "protect", title: "Protection Doa", text: "Bismillahi alladhi la yadurru ma'asmihi shay…", ar: "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ" }
+  ];
+
+  function getDoaState(){
+    try{
+      return JSON.parse(localStorage.getItem("solatTimeDoaV1") || "{}");
+    } catch(e){
+      return {};
+    }
+  }
+
+  function renderDoa(){
+    var st = getDoaState();
+    var list = $("guidanceChecklist");
+    list.innerHTML = "";
+    var done = 0;
+    DOAS.forEach(function(d){
+      var isDone = !!st[d.id];
+      if(isDone) done++;
+      var lab = document.createElement("label");
+      lab.className = "check-item" + (isDone ? " done" : "");
+      lab.innerHTML = '<span class="box">✓</span><span class="txt"><strong>' + d.title + ':</strong> ' + d.text + '<span class="ar-line">' + d.ar + '</span></span>';
+      lab.addEventListener("click", function(e){
+        e.preventDefault();
+        toggleDoa(d.id);
+      });
+      list.appendChild(lab);
+    });
+    $("doaBarEl").style.width = (done / DOAS.length * 100) + "%";
+    $("doaPctEl").textContent = done + " / " + DOAS.length + " done";
+  }
+
+  function toggleDoa(id){
+    var st = getDoaState();
+    st[id] = !st[id];
+    try{
+      localStorage.setItem("solatTimeDoaV1", JSON.stringify(st));
+    } catch(e){}
+    renderDoa();
+    if(st[id]) toast("🤲 MasyaAllah — checked off!");
+  }
+
+  function getRems(){
+    try{
+      var v = JSON.parse(localStorage.getItem("solatTimeRemindersV1") || localStorage.getItem("solatTime_reminders") || "null");
+      if(Array.isArray(v)) return v;
+    } catch(e){}
+    return null;
+  }
+
+  function saveRems(r){
+    try{
+      localStorage.setItem("solatTimeRemindersV1", JSON.stringify(r));
+    } catch(e){}
+  }
+
+  function seedRems(){
+    return [
+      { id: "r1", title: "Wudhu + prepare for Dhuhr/Jumaat Prayer", time: "12:30", repeat: "Friday", enabled: true },
+      { id: "r2", title: "Read Al-Mulk after Isha", time: "20:45", repeat: "Sunday", enabled: true },
+      { id: "r3", title: "Morning zikr after Fajr", time: "06:15", repeat: "Monday", enabled: false }
+    ];
+  }
+
+  function ensureRems(){
+    var r = getRems();
+    if(!r){
+      r = seedRems();
+      saveRems(r);
+    }
+    return r;
+  }
+
+  function renderRems(){
+    var rems = ensureRems().slice().sort(function(a, b){
+      return a.time.localeCompare(b.time);
+    });
+    mainReminderList.innerHTML = "";
+    if(!rems.length){
+      mainReminderList.innerHTML = '<div class="rem-empty">No reminders yet.<br>Click Manage to add one ✨</div>';
+      return;
+    }
+    rems.forEach(function(r, idx){
+      var div = document.createElement("div");
+      div.className = "rem";
+      var daysArr = r.repeat || r.days || "Friday";
+      var daysString = Array.isArray(daysArr) ? daysArr.join(', ') : daysArr;
+
+      div.innerHTML = '<div class="rem-time"><b>' + escapeHtml(r.time) + '</b><span>' + escapeHtml(daysString) + '</span></div>' +
+        '<div class="rem-body"><b>' + escapeHtml(r.title) + '</b><span>Repeat: ' + escapeHtml(daysString) + ' · ' + (r.enabled !== false ? "On" : "Off") + '</span></div>';
+
+      var tg = document.createElement("button");
+      tg.className = "rem-toggle" + ((r.enabled !== false) ? " on" : "");
+      tg.title = "Toggle";
+      tg.addEventListener("click", function(){
+        r.enabled = !(r.enabled !== false);
+        var all = ensureRems();
+        var f = all.find(function(x){
+          return (x.id === r.id || x === r);
+        });
+        if(f) f.enabled = r.enabled;
+        saveRems(all);
+        renderRems();
+      });
+
+      var del = document.createElement("button");
+      del.className = "rem-del";
+      del.textContent = "✕";
+      del.title = "Delete";
+
+      (function(reminderId){
+        del.addEventListener("click", function(){
+          pendingDeleteId = reminderId;
+          deleteModal.style.display = 'flex';
+        });
+      })(r.id || idx);
+
+      div.appendChild(tg);
+      div.appendChild(del);
+      mainReminderList.appendChild(div);
+    });
+  }
+
+  confirmDeleteBtn.onclick = function(){
+    if(pendingDeleteId !== null){
+      var all = ensureRems();
+      all = all.filter(function(x, idx){
+        return (x.id !== pendingDeleteId && idx !== pendingDeleteId);
+      });
+      saveRems(all);
+      renderRems();
+      toast("Reminder removed");
+    }
+    deleteModal.style.display = 'none';
+    pendingDeleteId = null;
+  };
+
+  cancelDeleteBtn.onclick = function(){
+    deleteModal.style.display = 'none';
+    pendingDeleteId = null;
+  };
+
+  window.addEventListener('click', function(e){
+    if(e.target === deleteModal){
+      deleteModal.style.display = 'none';
+      pendingDeleteId = null;
+    }
+  });
+
+  function escapeHtml(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function renderZoneModal(filter){
+    var q = (filter || "").trim().toLowerCase();
+    modalZonesBody.innerHTML = "";
+    var hasResults = false;
+
+    Object.keys(stateZonesData).forEach(function(stateName){
+      var zonesList = stateZonesData[stateName].filter(function(z){
+        if(!q) return true;
+        return (z.name.toLowerCase().includes(q) || z.code.toLowerCase().includes(q) || stateName.toLowerCase().includes(q));
+      });
+
+      if(zonesList.length > 0){
+        hasResults = true;
+        var gd = document.createElement("div");
+        gd.className = "state-group";
+        gd.innerHTML = "<h4>" + escapeHtml(stateName) + "</h4>";
+        var gr = document.createElement("div");
+        gr.className = "zone-grid";
+        zonesList.forEach(function(z){
+          var b = document.createElement("button");
+          b.className = "zone-btn" + (z.code === currentZone ? " active" : "");
+          b.innerHTML = "<b>" + escapeHtml(z.name.split(',')[0]) + "</b><span>" + escapeHtml(z.name) + "</span><code>" + escapeHtml(z.code) + "</code>";
+          b.addEventListener("click", function(){
+            selectZone(z.code, z.name.split(',')[0], stateName);
+            closeModal(locationModal);
+          });
+          gr.appendChild(b);
+        });
+        gd.appendChild(gr);
+        modalZonesBody.appendChild(gd);
+      }
+    });
+
+    if(!hasResults){
+      modalZonesBody.innerHTML = '<div class="skeleton">No zones match “' + escapeHtml(filter) + '”.</div>';
+    }
+  }
+
+  function findZoneBySearch(stateQ, cityQ){
+    var sq = (stateQ || "").trim().toLowerCase();
+    var cq = (cityQ || "").trim().toLowerCase();
+    var codeQ = (cq || sq).toUpperCase().replace(/\s/g, "");
+
+    for(var state in stateZonesData){
+      for(var i = 0; i < stateZonesData[state].length; i++){
+        var z = stateZonesData[state][i];
+        if(z.code.toUpperCase() === codeQ){
+          return { zone: z, state: state, city: z.name.split(',')[0] };
+        }
+      }
+    }
+
+    if(cq && malaysiaZones[cq]){
+      var code = malaysiaZones[cq];
+      for(var state in stateZonesData){
+        for(var i = 0; i < stateZonesData[state].length; i++){
+          var z = stateZonesData[state][i];
+          if(z.code === code){
+            return { zone: z, state: state, city: cq.toUpperCase() };
+          }
+        }
+      }
+    }
+
+    for(var key in malaysiaZones){
+      if((cq && key.includes(cq)) || (sq && key.includes(sq))){
+        var code = malaysiaZones[key];
+        for(var state in stateZonesData){
+          for(var i = 0; i < stateZonesData[state].length; i++){
+            var z = stateZonesData[state][i];
+            if(z.code === code){
+              return { zone: z, state: state, city: key.toUpperCase() };
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  async function selectZone(code, cityName, stateName){
+    currentZone = code;
+    currentNegeri = stateName;
+    currentDaerah = cityName;
+    
+    stateInput.value = currentNegeri;
+    cityInput.value = cityName;
+
+    try{
+      localStorage.setItem("solatTimeZoneV1", JSON.stringify({ code: currentZone, city: cityName, state: currentNegeri }));
+    } catch(e){}
+    updateHeader(cityName);
+    await loadPrayerMonth();
+  }
+
+  function updateHeader(cityName){
+    var dispCity = String(cityName || "").toUpperCase();
+    var dispState = String(currentNegeri || "").toUpperCase();
+    locationTitleText.innerHTML = escapeHtml(dispCity) + ', <span class="gold">' + escapeHtml(dispState) + '</span>';
+    zoneCodeEl.textContent = currentZone || "—";
+    zoneHintEl.innerHTML = '💡 Current: <b>' + escapeHtml(currentZone) + '</b> — ' + escapeHtml(currentDaerah) + '.';
+    try{
+      var hij = new Intl.DateTimeFormat("en-MY-u-ca-islamic", {
+        timeZone: MY_TZ, day: "numeric", month: "long", year: "numeric"
+      }).format(new Date());
+      hijriEl.textContent = hij;
+    } catch(e){
+      hijriEl.textContent = "—";
+    }
+    try{
+      gregEl.textContent = new Intl.DateTimeFormat("en-MY", {
+        timeZone: MY_TZ, weekday: "long", day: "numeric", month: "long", year: "numeric"
+      }).format(new Date());
+    } catch(e){}
+  }
+
+  async function loadPrayerMonth(){
+    if(!currentZone) return;
+    var parts = myNowParts();
+    var y = parts.y;
+    var m = parts.m;
+    setStatus(true, "Live API Connected");
+    apiStatusText.textContent = "Syncing…";
+    grid.innerHTML = '<div class="skeleton" style="grid-column:1/-1">✨ Syncing live times for ' + escapeHtml(currentZone) + '…</div>';
+    try{
+      var url = "https://api.waktusolat.app/v2/solat/" + encodeURIComponent(currentZone) + "?year=" + y + "&month=" + m;
+      var res = await fetch(url);
+      if(!res.ok) throw new Error("solat " + res.status);
+      var j = await res.json();
+      if(!j || !Array.isArray(j.prayers) || !j.prayers.length) throw new Error("empty prayers");
+      monthData = { 
+        year: j.year || y, month: j.month_number || m, monthName: j.month || "", prayers: j.prayers 
+      };
+      setStatus(true, "Live API Connected");
+      renderAll();
+    } 
+    catch(e){
+      setStatus(false, "Offline — showing estimate");
+      monthData = buildFallbackMonth(y, m);
+      renderAll();
+      toast("Offline — showing estimated times");
+    }
+  }
+
+  function buildFallbackMonth(y, m){
+    var days = new Date(y, m, 0).getDate();
+    var base = { imsak: "05:40", fajr: "05:50", syuruk: "07:00", dhuhr: "13:10", asr: "16:30", maghrib: "19:20", isha: "20:30" };
+    var toUnix = function(day, hm){
+      var parts = hm.split(":").map(Number);
+      var H = parts[0];
+      var M = parts[1];
+      return Math.floor(Date.UTC(y, m - 1, day, H - 8, M, 0) / 1000);
+    };
+    var prayers = [];
+    for(var d = 1; d <= days; d++){
+      prayers.push({
+        day: d, hijri: "—",
+        imsak: toUnix(d, base.imsak), fajr: toUnix(d, base.fajr),
+        syuruk: toUnix(d, base.syuruk), dhuha: toUnix(d, "07:25"),
+        dhuhr: toUnix(d, base.dhuhr), asr: toUnix(d, base.asr),
+        maghrib: toUnix(d, base.maghrib), isha: toUnix(d, base.isha)
+      });
+    }
+    return { year: y, month: m, monthName: "", prayers };
+  }
+
+  function renderAll(){
+    if(!monthData) return;
+    var d = myNowParts().d;
+    var todayObj = monthData.prayers.find(function(p){
+      return p.day === d;
+    }) || monthData.prayers[0];
+
+    var order = PRAYERS.map(function(p){
+      return { def: p, unix: todayObj[p.key] };
+    });
+    var nowSec = Math.floor(Date.now() / 1000);
+    var nextIdx = order.findIndex(function(o){
+      return o.unix > nowSec;
+    });
+    var isTomorrow = false;
+    var tomorrowFajr = null;
+    if(nextIdx === -1){
+      var tom = monthData.prayers.find(function(p){
+        return p.day === d + 1;
+      });
+      if(tom){ tomorrowFajr = tom.fajr; }
+      nextIdx = 0;
+      isTomorrow = true;
+    }
+    todayPrayer = { order: order, todayObj: todayObj, nextIdx: nextIdx, isTomorrow: isTomorrow, tomorrowFajr: tomorrowFajr };
+
+    try{ syurukMiniEl.textContent = fmtTime(todayObj.syuruk); } catch(e){}
+    var niceDay = new Intl.DateTimeFormat("en-MY", {
+      timeZone: MY_TZ, weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }).format(new Date());
+    todayLineEl.textContent = niceDay + " · " + currentDaerah;
+    todayPillEl.textContent = "Today · Day " + todayObj.day;
+    var monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    monthPillEl.textContent = (monthNames[monthData.month] || ("Month " + monthData.month)) + " " + monthData.year;
+    monthlyHeading.textContent = "Monthly Prayer Timetable — " + (monthNames[monthData.month] || "") + " " + monthData.year;
+
+    renderCards(nowSec);
+    renderTable(d);
+    startCountdown();
+    var nxt = order[nextIdx];
+    nextNameEl.textContent = nxt.def.name;
+    nextIconEl.textContent = nxt.def.icon;
+    nextTimeEl.textContent = isTomorrow && tomorrowFajr ? fmtTime(tomorrowFajr) + " (tmr)" : fmtTime(nxt.unix);
+  }
+
+  function renderCards(nowSec){
+    grid.innerHTML = "";
+    var order = todayPrayer.order;
+    var nextIdx = todayPrayer.nextIdx;
+    var isTomorrow = todayPrayer.isTomorrow;
+
+    order.forEach(function(o, idx){
+      var isNext = (idx === nextIdx);
+      var isDone = !isTomorrow && o.unix <= nowSec;
+      var card = document.createElement("div");
+      card.className = "prayer-card" + (isNext ? " is-next" : "") + (isDone && !isNext ? " is-done" : "");
+      var state = "Upcoming";
+      if(isNext) state = isTomorrow ? "Tomorrow" : "Next";
+      else if(isDone) state = "Done ✓";
+
+      card.innerHTML = '<div class="pc-top"><div class="pc-icon">' + o.def.icon + '</div><div class="pc-state">' + state + '</div></div>' +
+        '<h4>' + o.def.name + '</h4><div class="ar">' + o.def.ar + '</div>' +
+        '<div class="time">' + escapeHtml(fmtShort(o.unix)) + ' <small>' + escapeHtml(dayPeriod(o.unix)) + '</small></div>';
+      grid.appendChild(card);
+    });
+  }
+
+  function dayPeriod(unix){
+    try{
+      var h = parseInt(new Intl.DateTimeFormat("en-GB", { timeZone: MY_TZ, hour: "2-digit", hour12: false }).format(new Date(unix * 1000)), 10);
+      return h < 12 ? "AM" : "PM";
+    } catch(e){
+      return "";
+    }
+  }
+
+  function renderTable(todayDay){
+    monthlyBody.innerHTML = "";
+    monthData.prayers.forEach(function(p){
+      var tr = document.createElement("tr");
+      if(p.day === todayDay) tr.className = "today";
+      var dayName = dayNameFor(p);
+      tr.innerHTML = "<td><b>" + p.day + "</b> <span style='color:var(--muted2); font-size:11px'>" + escapeHtml(dayName) + "</span></td>" +
+        "<td>" + escapeHtml(fmtShort(p.imsak)) + "</td>" +
+        "<td>" + escapeHtml(fmtShort(p.fajr)) + "</td>" +
+        "<td>" + escapeHtml(fmtShort(p.syuruk)) + "</td>" +
+        "<td>" + escapeHtml(fmtShort(p.dhuhr)) + "</td>" +
+        "<td>" + escapeHtml(fmtShort(p.asr)) + "</td>" +
+        "<td>" + escapeHtml(fmtShort(p.maghrib)) + "</td>" +
+        "<td>" + escapeHtml(fmtShort(p.isha)) + "</td>";
+      monthlyBody.appendChild(tr);
+    });
+  }
+
+  function dayNameFor(p){
+    try{
+      var dt = new Date(p.fajr * 1000);
+      return new Intl.DateTimeFormat("en-MY", { timeZone: MY_TZ, weekday: "short" }).format(dt);
+    } catch(e){
+      return "";
+    }
+  }
+
+  function startCountdown(){
+    if(countdownTimer) clearInterval(countdownTimer);
+    var tick = function(){
+      if(!todayPrayer) return;
+      var nowSec = Math.floor(Date.now() / 1000);
+      var order = todayPrayer.order;
+      var nextIdx = todayPrayer.nextIdx;
+      var isTomorrow = todayPrayer.isTomorrow;
+      var tomorrowFajr = todayPrayer.tomorrowFajr;
+      var todayObj = todayPrayer.todayObj;
+
+      var prevUnix, nextUnix, nextDef;
+      if(!isTomorrow){
+        nextDef = order[nextIdx].def;
+        nextUnix = order[nextIdx].unix;
+        prevUnix = nextIdx > 0 ? order[nextIdx - 1].unix : (todayObj.fajr - 6 * 3600);
+      } else {
+        nextDef = order[0].def;
+        nextUnix = tomorrowFajr || (order[order.length - 1].unix + 8 * 3600);
+        prevUnix = order[order.length - 1].unix;
+      }
+      if(!isTomorrow && nextUnix <= nowSec){ renderAll(); return; }
+      if(isTomorrow && tomorrowFajr && tomorrowFajr <= nowSec){ loadPrayerMonth(); return; }
+
+      var remain = Math.max(0, nextUnix - nowSec);
+      var total = Math.max(1, nextUnix - prevUnix);
+      var elapsed = Math.min(total, Math.max(0, nowSec - prevUnix));
+      var pct = Math.round(elapsed / total * 100);
+
+      var h = String(Math.floor(remain / 3600)).padStart(2, "0");
+      var m = String(Math.floor(remain % 3600 / 60)).padStart(2, "0");
+      var s = String(remain % 60).padStart(2, "0");
+
+      calcLabelEl.textContent = isTomorrow ? "Next prayer · tomorrow" : "Next prayer · today";
+      calcNameEl.textContent = nextDef.name + " " + nextDef.icon;
+      calcTimerEl.innerHTML = h + " <span>:</span> " + m + " <span>:</span> " + s;
+      heroCountdownEl.textContent = h + ":" + m + ":" + s;
+      calcBarEl.style.width = pct + "%";
+      calcFromEl.textContent = "Now · " + new Intl.DateTimeFormat("en-GB", { timeZone: MY_TZ, hour: "2-digit", minute: "2-digit" }).format(new Date());
+      calcToEl.textContent = nextDef.name + " at " + fmtTime(nextUnix);
+
+      if(!tick._n) tick._n = 0;
+      tick._n++;
+      if(tick._n % 30 === 0) renderCards(nowSec);
+    };
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+
+  function openModal(m){ m.classList.add("open"); }
+  function closeModal(m){ m.classList.remove("open"); }
+
+  $("openLocationModalBtn").addEventListener("click", function(){
+    renderZoneModal(modalSearchInput.value);
+    openModal(locationModal);
+  });
+  $("closeModalBtn").addEventListener("click", function(){
+    closeModal(locationModal);
+  });
+  locationModal.addEventListener("click", function(e){
+    if(e.target === locationModal) closeModal(locationModal);
+  });
+
+  var searchDeb = null;
+  modalSearchInput.addEventListener("input", function(){
+    clearTimeout(searchDeb);
+    searchDeb = setTimeout(function(){
+      renderZoneModal(modalSearchInput.value);
+    }, 160);
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closeModal(locationModal);
+      deleteModal.style.display = 'none';
+    }
+  });
+
+  searchBtn.addEventListener("click", doSearch);
+  [stateInput, cityInput].forEach(function(inp){
+    inp.addEventListener("keydown", function(e){
+      if(e.key === "Enter") doSearch();
+    });
+  });
+
+  function doSearch(){
+    var res = findZoneBySearch(stateInput.value, cityInput.value);
+    if(!res){
+      toast("No zone found — try a zone code like JHR02 or city like Shah Alam");
+      return;
+    }
+    selectZone(res.zone.code, res.city, res.state);
+    toast("📍 Switched to " + res.zone.code + " — " + res.city);
+  }
+
+  window.addEventListener('focus', renderRems);
+
+  async function init(){
+    renderDoa();
+    renderRems();
+    var saved = null;
+    try{
+      saved = JSON.parse(localStorage.getItem("solatTimeZoneV1") || "null");
+    } catch(e){}
+
+    if(saved && saved.code){
+      currentZone = saved.code;
+      stateInput.value = saved.state || "";
+      cityInput.value = saved.city || "";
+      updateHeader(saved.city);
+      await loadPrayerMonth();
+    } 
+    else {
+      locationTitleText.textContent = "CHOOSE YOUR ZONE";
+    }
+    renderZoneModal("");
+  }
+  init();
+})();
+</script>
+</body>
+</html>
